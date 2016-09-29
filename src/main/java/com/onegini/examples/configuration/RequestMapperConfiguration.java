@@ -22,9 +22,9 @@ import io.undertow.server.handlers.BlockingHandler;
 
 @Configuration
 @EnableConfigurationProperties(UndertowProperties.class)
-public class WebConfiguration {
+public class RequestMapperConfiguration {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(WebConfiguration.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RequestMapperConfiguration.class);
 
   @Autowired
   private HttpHandler httpHandler;
@@ -32,8 +32,12 @@ public class WebConfiguration {
   private UndertowProperties undertowProperties;
 
   @Bean
-  public HttpHandler httpHandler(final ObjectMapper objectMapper) {
-    final RequestMapperHttpHandler requestMapperHttpHandler = new RequestMapperHttpHandler(objectMapper);
+  public RequestMapperHttpHandler requestMapperHttpHandler(final ObjectMapper objectMapper){
+    return new RequestMapperHttpHandler(objectMapper);
+  }
+
+  @Bean
+  public HttpHandler httpHandler(final RequestMapperHttpHandler requestMapperHttpHandler) {
     final AllowedMethodsHandler postHandler = new AllowedMethodsHandler(requestMapperHttpHandler, POST);
     return new BlockingHandler(Handlers.path().addExactPath("/map-request", postHandler));
   }

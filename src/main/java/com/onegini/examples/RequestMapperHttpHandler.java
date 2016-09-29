@@ -5,16 +5,23 @@ import static io.undertow.util.Headers.CONTENT_TYPE;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.onegini.examples.configuration.BasicAuthenticationProperties;
 import com.onegini.examples.model.Request;
 import com.onegini.examples.model.TokenValidationResult;
+import com.onegini.examples.util.BasicAuthenticationHeaderBuilder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
 public class RequestMapperHttpHandler implements HttpHandler {
 
   private final ObjectMapper objectMapper;
+
+  @Resource
+  private BasicAuthenticationProperties basicAuthenticationProperties;
 
   private final String SCOPES_HEADER = "Authorized_scopes";
   private final String AUTHORIZATION_HEADER = "Authorization";
@@ -48,14 +55,33 @@ public class RequestMapperHttpHandler implements HttpHandler {
     final String scope = tokenValidationResult.getScope();
     final String userId = tokenValidationResult.getReferenceId();
 
-    request.setRequestUri(requestUri.concat("/"+userId));
+    appendUserIdToRequestUri(request, requestUri, userId);
     removeBlacklistedHeaders(headers);
-    headers.put(SCOPES_HEADER, scope);
+    addScopesHeader(headers, scope);
+    addBasicAuthHeaderIfNeeded(headers);
     return request;
+  }
+
+  private void appendUserIdToRequestUri(final Request request, final String requestUri, final String userId) {
+    request.setRequestUri(requestUri.concat("/"+userId));
   }
 
   private void removeBlacklistedHeaders(final Map<String, String> headers) {
     headers.remove(AUTHORIZATION_HEADER);
     headers.remove(SCOPES_HEADER);
+  }
+
+  private void addScopesHeader(final Map<String, String> headers, final String scope) {
+    headers.put(SCOPES_HEADER, scope);
+  }
+
+  private void addBasicAuthHeaderIfNeeded(final Map<String, String> headers) {
+    if(basicAuthenticationProperties.isEnabled()) {
+      final String authorizationHeaderValue = new BasicAuthenticationHeaderBuilder()
+          .withUsername(basicAuthenticationProperties.getUsername())
+          .withPassword(basicAuthenticationProperties.getPassword())
+          .build();
+      headers.put(AUTHORIZATION_HEADER, authorizationHeaderValue);
+    }
   }
 }
