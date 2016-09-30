@@ -10,8 +10,6 @@ public class BasicAuthenticationProperties {
   private String username;
   private String password;
 
-  private boolean enabled;
-
   public String getUsername() {
     return username;
   }
@@ -26,13 +24,5 @@ public class BasicAuthenticationProperties {
 
   public void setPassword(final String password) {
     this.password = password;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(final boolean enabled) {
-    this.enabled = enabled;
   }
 }
