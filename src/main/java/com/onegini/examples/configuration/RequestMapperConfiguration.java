@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-import com.onegini.examples.RequestMapperHttpHandler;
+import com.onegini.examples.web.RequestMapperHttpHandler;
 import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
