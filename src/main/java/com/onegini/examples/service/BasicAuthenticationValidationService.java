@@ -1,4 +1,4 @@
-package com.onegini.examples;
+package com.onegini.examples.service;
 
 import static com.onegini.examples.RequestMapperConstants.AUTHORIZATION_HEADER;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -51,7 +51,7 @@ public class BasicAuthenticationValidationService {
     return getBasicAuthenticationCredentials(authenticationHeaderValues.getFirst());
   }
 
-  public Optional<BasicAuthenticationCredentials> getBasicAuthenticationCredentials(final String authenticationHeader) {
+  private Optional<BasicAuthenticationCredentials> getBasicAuthenticationCredentials(final String authenticationHeader) {
     final String encodedUsernamePassword = authenticationHeader.replace(BASIC_AUTH_HEADER_VALUE_PREFIX, EMPTY).trim();
     final String usernamePassword;
     try {

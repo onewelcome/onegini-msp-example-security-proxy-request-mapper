@@ -26,7 +26,6 @@
 		<spring.boot.version>1.4.0.RELEASE</spring.boot.version>
 		<spring-boot-maven-plugin.version>1.4.0.RELEASE</spring-boot-maven-plugin.version>
 		<docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
-		<jackson-module-afterburner.version>2.7.1</jackson-module-afterburner.version>
 		<commons-lang3.version>3.4</commons-lang3.version>
 	</properties>
 
@@ -35,7 +34,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-undertow</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -56,12 +58,6 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-afterburner</artifactId>
-			<version>${jackson-module-afterburner.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.undertow</groupId>
-			<artifactId>undertow-core</artifactId>
-			<version>1.2.9.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

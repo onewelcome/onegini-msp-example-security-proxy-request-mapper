@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Request {
+public class RequestMapperRequest {
 
   private Map<String, String> headers;
 
@@ -13,10 +13,10 @@ public class Request {
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private TokenValidationResult tokenValidationResult;
 
-  public Request() {
+  public RequestMapperRequest() {
   }
 
-  public Request(final Map<String, String> headers) {
+  public RequestMapperRequest(final Map<String, String> headers) {
     this.headers = headers;
   }
 
