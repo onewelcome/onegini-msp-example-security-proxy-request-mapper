@@ -1,7 +1,7 @@
 # Example Request Mapper
 
 Request mapper is an extension to the Onegini Security Proxy, which allows to give instructions on how to modify request before it gets to a resource server.
-For more information please see [Security Proxy Request Mapper Documentation](https://docs.onegini.com/msp/3.0/security-proxy/topics/request-mapper.html)
+For more information please see [Security Proxy Request Mapper Documentation](https://docs.onegini.com/msp/latest/security-proxy/topics/embedded-resource-gateway-functionality/implement-request-mapper.html)
 
 ## Frameworks
 
