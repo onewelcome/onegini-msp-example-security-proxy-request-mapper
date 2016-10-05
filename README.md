@@ -16,7 +16,7 @@ In the Example Request Mapper project the following main frameworks are used:
 | basic.authentication.username | username      | The basic authentication username used to access the api. |
 | basic.authentication.password | password      | The basic authentication password used to access the api. |
 | onegini.undertow.port         | 5540          | The port on which Request Mapper will be exposed.         |
-| onegini.undertow.host         | localhost     | The host where Request Mapper will be exposed.            |                                                                                                                                                 | 
+| onegini.undertow.host         | 0.0.0.0       | The host where Request Mapper will be exposed.            |                                                                                                                                                 | 
 
 ## Build the sourcecode
 

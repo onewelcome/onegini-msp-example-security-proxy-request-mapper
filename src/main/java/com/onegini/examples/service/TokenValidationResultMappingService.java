@@ -24,7 +24,7 @@ public class TokenValidationResultMappingService {
   }
 
   private void mapUserId(final RequestMapperRequest request) {
-    String requestUri = request.getRequestUri();
+    final String requestUri = request.getRequestUri();
     final TokenValidationResult tokenValidationResult = request.getTokenValidationResult();
     final String userId = tokenValidationResult.getReferenceId();
 
