@@ -36,6 +36,10 @@ or
 
 `java -jar <location of the jar file>`
 
+or (via Docker)
+
+`docker run example-security-proxy-resource-gateway:latest -P5540:5540`
+
 ## Example request
 
 ```http
