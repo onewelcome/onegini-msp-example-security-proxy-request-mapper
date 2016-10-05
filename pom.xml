@@ -83,7 +83,7 @@
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>${docker-maven-plugin.version}</version>
 				<configuration>
-					<imageName>example-security-proxy-request-mapper:latest</imageName>
+					<imageName>example-security-proxy-request-mapper:snapshot</imageName>
 					<baseImage>java:8u92-jre-alpine</baseImage>
 					<entryPoint>["java", "-jar", "/opt/onegini/security-proxy-request-mapper-boot.jar"]</entryPoint>
 					<resources>

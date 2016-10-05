@@ -24,7 +24,7 @@ In the Example Request Mapper project the following main frameworks are used:
 
 ## Build the application with docker
 
-`mvn docker:build -Psnapshot`
+`mvn docker:build`
 
 ## Run the application
 
