@@ -5,15 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TokenValidationResult {
 
-  private String referenceId;
+  private String sub;
 
   private String scope;
 
   public TokenValidationResult() {
   }
 
-  public String getReferenceId() {
-    return referenceId;
+  public String getSub() {
+    return sub;
   }
 
   public String getScope() {

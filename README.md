@@ -51,7 +51,10 @@ Content-Type: application/json
   "request_uri": "/some-resource-gateway-request-uri",
   "token_validation_result": {
     "scope": "exampleScope",
-    "reference_id": "exampleUserId"
+    "sub": "exampleUserId",
+    "amr": [
+       "DEFAULT"
+     ]
     ...
   },
   "headers": {
