@@ -43,6 +43,7 @@
 		<docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
 		<jackson-module-afterburner.version>2.7.1</jackson-module-afterburner.version>
 		<commons-lang3.version>3.4</commons-lang3.version>
+		<gson.version>2.2.2</gson.version>
 	</properties>
 
 	<dependencies>
@@ -80,6 +81,12 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons-lang3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 
