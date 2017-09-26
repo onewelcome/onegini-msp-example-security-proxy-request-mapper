@@ -1,23 +1,35 @@
 package com.onegini.examples.service;
 
-import static com.onegini.examples.RequestMapperConstants.TOKEN_TYPE_HEADER;
 import static com.onegini.examples.RequestMapperConstants.AUTHORIZATION_HEADER;
 import static com.onegini.examples.RequestMapperConstants.SCOPES_HEADER;
+import static com.onegini.examples.RequestMapperConstants.TOKEN_TYPE_HEADER;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onegini.examples.model.RequestMapperRequest;
 import com.onegini.examples.model.TokenValidationResult;
 
 @Service
 public class TokenValidationResultMappingService {
 
+  private static final Logger LOG = LoggerFactory.getLogger(TokenValidationResultMappingService.class);
   private static final String[] BLACKLISTED_HEADERS = {AUTHORIZATION_HEADER, SCOPES_HEADER, TOKEN_TYPE_HEADER};
+
+  private final ObjectMapper objectMapper;
+
+  @Autowired
+  public TokenValidationResultMappingService(final ObjectMapper objectMapper) {
+    this.objectMapper = objectMapper;
+  }
 
   public RequestMapperRequest modifyRequest(final RequestMapperRequest request) {
     removeBlacklistedHeaders(request);
@@ -53,6 +65,10 @@ public class TokenValidationResultMappingService {
     final TokenValidationResult tokenValidationResult = request.getTokenValidationResult();
     final List<String> amr = tokenValidationResult.getAmr();
 
-    headers.put(TOKEN_TYPE_HEADER, new Gson().toJson(amr));
+    try {
+      headers.put(TOKEN_TYPE_HEADER, objectMapper.writeValueAsString(amr));
+    } catch (JsonProcessingException e) {
+      LOG.error("Could not set token type header", e);
+    }
   }
 }
