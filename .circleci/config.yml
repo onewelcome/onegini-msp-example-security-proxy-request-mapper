@@ -1,0 +1,340 @@
+# Java Maven CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-java/ for more details
+#
+version: 2.0
+
+#########################
+# CACHES
+#########################
+
+restore_cache: &restore_m2_cache
+  keys:
+    - m2-{{ checksum "pom.xml" }}
+    - m2- # used if checksum fails
+
+#########################
+# COMMANDS
+#########################
+
+commands:
+
+  restore_m2_cache:
+    description: "Restore m2 cache for specified maven task"
+    parameters:
+      cache_name:
+        default: "security-proxy-request-mapper"
+        type: enum
+        enum: ["security-proxy-request-mapper", "sonar"]
+    steps:
+      - restore_cache:
+          keys:
+            - m2-<<parameters.cache_name>>-{{ checksum "pom.xml" }}
+            - m2-<<parameters.cache_name>>- # used if checksum fails
+            - m2-
+
+  save_m2_cache:
+    description: "Save m2 cache for specified maven task"
+    parameters:
+      cache_name:
+        default: "security-proxy-request-mapper"
+        type: enum
+        enum: ["security-proxy-request-mapper", "sonar"]
+    steps:
+      - save_cache:
+          key: m2-<<parameters.cache_name>>-{{ checksum "pom.xml" }}
+          paths:
+            - ~/.m2
+
+jobs:
+
+  #########################
+  # BUILD
+  #########################
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - checkout
+      - restore_cache: *restore_m2_cache
+      - run:
+          name: Build and Unit test
+          command: mvn -s .circleci/mavenSettings.xml clean install -U
+      - save_cache:
+          key: m2-{{ checksum "pom.xml" }}
+          paths:
+            - ~/.m2
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
+
+  #########################
+  # SONAR CHECK
+  #########################
+  code-analysys:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/
+      - restore_m2_cache:
+          cache_name: "sonar"
+      - run:
+          name: Run static code analysys
+          command: |
+            mvn -s .circleci/mavenSettings.xml \
+            sonar:sonar -Dsonar.projectKey=Onegini_security-proxy-request-mapper \
+            -Dsonar.organization=onegini \
+            -Dsonar.host.url=${SONAR_HOST_URL} \
+            -Dsonar.login=${SONAR_LOGIN} \
+            -Dsonar.branch.name=${CIRCLE_BRANCH}
+      - save_m2_cache:
+          cache_name: "sonar"
+
+  #########################
+  # DOCKERS
+  #########################
+  deploy-docker-security-proxy-request-mapper-snapshot:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - attach_workspace:
+          at: ~/
+      - restore_m2_cache:
+          cache_name: "security-proxy-request-mapper"
+      - run:
+          name: Build snapshot docker artifacts
+          command: |
+            mvn -s .circleci/mavenSettings.xml docker:build -Psnapshot -U
+      - run:
+          name: Deploy snapshot docker artifacts
+          command: |
+            mvn -s .circleci/mavenSettings.xml docker:push -Psnapshot -U
+      - save_m2_cache:
+          cache_name: "security-proxy-request-mapper"
+
+  deploy-docker-security-proxy-request-mapper-release:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - attach_workspace:
+          at: ~/
+      - restore_m2_cache:
+          cache_name: "security-proxy-request-mapper"
+      - run:
+          name: Build release docker artifacts
+          command: |
+            mvn -s .circleci/mavenSettings.xml -pl security-proxy-request-mapper docker:build -Prelease -U
+      - run:
+          name: Deploy release docker artifacts
+          command: |
+            mvn -s .circleci/mavenSettings.xml -pl security-proxy-request-mapper docker:push -Prelease -U
+      - save_m2_cache:
+          cache_name: "extension"
+
+#  build-and-push-extension-docker-deployment-tag:
+#    docker:
+#      - image: circleci/openjdk:11-jdk
+#    working_directory: ~/repo
+#    steps:
+#      - setup_remote_docker:
+#          docker_layer_caching: true
+#      - attach_workspace:
+#          at: ~/
+#      - restore_m2_cache:
+#          cache_name: "extension"
+#      - run:
+#          name: Build and push test environment deployment extension docker image
+#          command: |
+#            tag="test-"$(date "+%Y%m%d%H%M%S")"-"${CIRCLE_SHA1:0:12}
+#            mvn -s .circleci/mavenSettings.xml -pl zlm-cim-extension docker:build -Psnapshot -Ddocker.snapshotTag=$tag -U
+#            mvn -s .circleci/mavenSettings.xml -pl zlm-cim-extension docker:push -Psnapshot -Ddocker.snapshotTag=$tag -U
+
+#  build-and-push-test-services-docker-deployment-tag:
+#    docker:
+#      - image: circleci/openjdk:11-jdk
+#    working_directory: ~/repo
+#    steps:
+#      - setup_remote_docker:
+#          docker_layer_caching: true
+#      - attach_workspace:
+#          at: ~/
+#      - restore_m2_cache:
+#          cache_name: "test-services"
+#      - run:
+#          name: Build and push test environment deployment test-services docker image
+#          command: |
+#            tag="test-"$(date "+%Y%m%d%H%M%S")"-"${CIRCLE_SHA1:0:12}
+#            mvn -s .circleci/mavenSettings.xml -pl zlm-cim-test-services docker:build -Psnapshot -Ddocker.snapshotTag=$tag -U
+#            mvn -s .circleci/mavenSettings.xml -pl zlm-cim-test-services docker:push -Psnapshot -Ddocker.snapshotTag=$tag -U
+
+  #########################
+  # ARTIFACTS
+  #########################
+  deploy-artifacts:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/
+      - restore_cache: *restore_m2_cache
+      - run:
+          name: Deploy artifacts
+          command: |
+            mvn -s .circleci/mavenSettings.xml deploy -DskipTests -U
+
+  #########################
+  # VULNERABILITIES
+  #########################
+  test-vulnerabilities: &test-vulnerabilities
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/
+      - restore_cache: *restore_m2_cache
+      - run:
+          name: Vulnerabilities - pom dependency checker
+          command: |
+            mvn -s .circleci/mavenSettings.xml verify -P dependency-check -DskipTests -U
+      - save_cache:
+          key: m2-{{ checksum "pom.xml" }}
+          paths:
+            - ~/.m2
+
+  test-vulnerabilities-non-blocking:
+    <<: *test-vulnerabilities
+
+  test-vulnerabilities-blocking:
+    <<: *test-vulnerabilities
+
+#########################
+# WORKFLOWS
+#########################
+workflows:
+  version: 2
+  zlm-workflow:
+    jobs:
+      - build:
+          context: dev-context
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - code-analysys:
+          context: dev-context
+          requires:
+            - build
+      - deploy-docker-security-proxy-request-mapper-snapshot:
+          context: dev-context
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build
+#      - deploy-docker-test-services-snapshot:
+#          context: dev-context
+#          filters:
+#            branches:
+#              only:
+#                - master
+#          requires:
+#            - build
+      - deploy-docker-extension-release:
+          context: dev-context
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build
+#      - deploy-docker-test-services-release:
+#          context: dev-context
+#          filters:
+#            tags:
+#              only: /.*/
+#            branches:
+#              ignore: /.*/
+#          requires:
+#            - build
+      - deploy-artifacts:
+          context: dev-context
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only:
+                - master
+          requires:
+            - build
+      - test-vulnerabilities-non-blocking:
+          context: dev-context
+          filters:
+            branches:
+              only: develop
+            tags:
+              ignore: /.*/
+          requires:
+            - deploy-docker-security-proxy-request-mapper-snapshot
+      - test-vulnerabilities-blocking:
+          filters:
+            branches:
+              only: master
+            tags:
+              ignore: /.*/
+          context: dev-context
+          requires:
+            - build
+      - hold:
+          type: approval
+          filters:
+            branches:
+              only:
+                - develop
+          requires:
+            - build
+      - build-and-push-docker-deployment-tags:
+          context: dev-context
+          requires:
+            - hold
+      - build-and-push-docker-deployment-tags:
+          context: dev-context
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build
+#      - build-and-push-extension-docker-deployment-tag:
+#          context: dev-context
+#          filters:
+#            branches:
+#              only:
+#                - develop
+#          requires:
+#            - hold
+#      - build-and-push-test-services-docker-deployment-tag:
+#          context: dev-context
+#          filters:
+#            branches:
+#              only:
+#                - develop
+#                - styling
+#          requires:
+#            - hold
