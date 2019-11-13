@@ -25,7 +25,7 @@ commands:
       cache_name:
         default: ""
         type: enum
-        enum: ["", "security-proxy-request-mapper", "sonar"]
+        enum: ["", "security-proxy-request-mapper"]
     steps:
       - restore_cache:
           keys:
@@ -39,7 +39,7 @@ commands:
       cache_name:
         default: ""
         type: enum
-        enum: ["", "security-proxy-request-mapper", "sonar"]
+        enum: ["", "security-proxy-request-mapper"]
     steps:
       - save_cache:
           key: m2-<<parameters.cache_name>>-{{ checksum "pom.xml" }}
@@ -71,30 +71,6 @@ jobs:
           root: ~/
           paths:
             - repo
-
-  #########################
-  # SONAR CHECK
-  #########################
-  code-analysys:
-    docker:
-      - image: circleci/openjdk:8-jdk
-    working_directory: ~/repo
-    steps:
-      - attach_workspace:
-          at: ~/
-      - restore_m2_cache:
-          cache_name: "sonar"
-      - run:
-          name: Run static code analysys
-          command: |
-            mvn -s .circleci/mavenSettings.xml \
-            sonar:sonar -Dsonar.projectKey=Onegini_security-proxy-request-mapper \
-            -Dsonar.organization=onegini \
-            -Dsonar.host.url=${SONAR_HOST_URL} \
-            -Dsonar.login=${SONAR_LOGIN} \
-            -Dsonar.branch.name=${CIRCLE_BRANCH}
-      - save_m2_cache:
-          cache_name: "sonar"
 
   #########################
   # DOCKERS
@@ -217,10 +193,6 @@ workflows:
               only: /.*/
             branches:
               only: /.*/
-      - code-analysys:
-          context: dev-context
-          requires:
-            - build
       - deploy-docker-security-proxy-request-mapper-snapshot:
           context: dev-context
           filters:
