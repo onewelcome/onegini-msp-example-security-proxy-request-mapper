@@ -23,9 +23,9 @@ commands:
     description: "Restore m2 cache for specified maven task"
     parameters:
       cache_name:
-        default: "security-proxy-request-mapper"
+        default: ""
         type: enum
-        enum: ["security-proxy-request-mapper", "sonar"]
+        enum: ["", "security-proxy-request-mapper", "sonar"]
     steps:
       - restore_cache:
           keys:
@@ -37,9 +37,9 @@ commands:
     description: "Save m2 cache for specified maven task"
     parameters:
       cache_name:
-        default: "security-proxy-request-mapper"
+        default: ""
         type: enum
-        enum: ["security-proxy-request-mapper", "sonar"]
+        enum: ["", "security-proxy-request-mapper", "sonar"]
     steps:
       - save_cache:
           key: m2-<<parameters.cache_name>>-{{ checksum "pom.xml" }}
