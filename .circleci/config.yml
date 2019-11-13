@@ -141,43 +141,25 @@ jobs:
           command: |
             mvn -s .circleci/mavenSettings.xml -pl security-proxy-request-mapper docker:push -Prelease -U
       - save_m2_cache:
-          cache_name: "extension"
+          cache_name: "security-proxy-request-mapper"
 
-#  build-and-push-extension-docker-deployment-tag:
-#    docker:
-#      - image: circleci/openjdk:11-jdk
-#    working_directory: ~/repo
-#    steps:
-#      - setup_remote_docker:
-#          docker_layer_caching: true
-#      - attach_workspace:
-#          at: ~/
-#      - restore_m2_cache:
-#          cache_name: "extension"
-#      - run:
-#          name: Build and push test environment deployment extension docker image
-#          command: |
-#            tag="test-"$(date "+%Y%m%d%H%M%S")"-"${CIRCLE_SHA1:0:12}
-#            mvn -s .circleci/mavenSettings.xml -pl zlm-cim-extension docker:build -Psnapshot -Ddocker.snapshotTag=$tag -U
-#            mvn -s .circleci/mavenSettings.xml -pl zlm-cim-extension docker:push -Psnapshot -Ddocker.snapshotTag=$tag -U
-
-#  build-and-push-test-services-docker-deployment-tag:
-#    docker:
-#      - image: circleci/openjdk:11-jdk
-#    working_directory: ~/repo
-#    steps:
-#      - setup_remote_docker:
-#          docker_layer_caching: true
-#      - attach_workspace:
-#          at: ~/
-#      - restore_m2_cache:
-#          cache_name: "test-services"
-#      - run:
-#          name: Build and push test environment deployment test-services docker image
-#          command: |
-#            tag="test-"$(date "+%Y%m%d%H%M%S")"-"${CIRCLE_SHA1:0:12}
-#            mvn -s .circleci/mavenSettings.xml -pl zlm-cim-test-services docker:build -Psnapshot -Ddocker.snapshotTag=$tag -U
-#            mvn -s .circleci/mavenSettings.xml -pl zlm-cim-test-services docker:push -Psnapshot -Ddocker.snapshotTag=$tag -U
+  build-and-push-security-proxy-request-mapper-docker-deployment-tag:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - attach_workspace:
+          at: ~/
+      - restore_m2_cache:
+          cache_name: "security-proxy-request-mapper"
+      - run:
+          name: Build and push test environment deployment security-proxy-request-mapper docker image
+          command: |
+            tag="test-"$(date "+%Y%m%d%H%M%S")"-"${CIRCLE_SHA1:0:12}
+            mvn -s .circleci/mavenSettings.xml docker:build -Psnapshot -Ddocker.snapshotTag=$tag -U
+            mvn -s .circleci/mavenSettings.xml docker:push -Psnapshot -Ddocker.snapshotTag=$tag -U
 
   #########################
   # ARTIFACTS
@@ -226,7 +208,7 @@ jobs:
 #########################
 workflows:
   version: 2
-  zlm-workflow:
+  security-proxy-request-mapper-workflow:
     jobs:
       - build:
           context: dev-context
@@ -247,15 +229,7 @@ workflows:
                 - master
           requires:
             - build
-#      - deploy-docker-test-services-snapshot:
-#          context: dev-context
-#          filters:
-#            branches:
-#              only:
-#                - master
-#          requires:
-#            - build
-      - deploy-docker-extension-release:
+      - deploy-docker-security-proxy-request-mapper-release:
           context: dev-context
           filters:
             tags:
@@ -264,15 +238,6 @@ workflows:
               ignore: /.*/
           requires:
             - build
-#      - deploy-docker-test-services-release:
-#          context: dev-context
-#          filters:
-#            tags:
-#              only: /.*/
-#            branches:
-#              ignore: /.*/
-#          requires:
-#            - build
       - deploy-artifacts:
           context: dev-context
           filters:
@@ -321,20 +286,11 @@ workflows:
                 - master
           requires:
             - build
-#      - build-and-push-extension-docker-deployment-tag:
-#          context: dev-context
-#          filters:
-#            branches:
-#              only:
-#                - develop
-#          requires:
-#            - hold
-#      - build-and-push-test-services-docker-deployment-tag:
-#          context: dev-context
-#          filters:
-#            branches:
-#              only:
-#                - develop
-#                - styling
-#          requires:
-#            - hold
+      - build-and-push-security-proxy-request-mapper-docker-deployment-tag:
+          context: dev-context
+          filters:
+            branches:
+              only:
+                - develop
+          requires:
+            - hold
