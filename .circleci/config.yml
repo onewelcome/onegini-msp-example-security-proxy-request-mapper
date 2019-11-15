@@ -41,12 +41,10 @@ jobs:
           key: example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
       - run:
           name: Build snapshot docker artifacts
-          command: |
-            mvn $MAVEN_CLI_OPTS docker:build -Psnapshot -U
+          command: mvn $MAVEN_CLI_OPTS docker:build -Psnapshot -U
       - run:
           name: Deploy snapshot docker artifacts
-          command: |
-            mvn $MAVEN_CLI_OPTS docker:push -Psnapshot -U
+          command: mvn $MAVEN_CLI_OPTS docker:push -Psnapshot -U
 
   deploy-docker-release:
     docker:
@@ -59,12 +57,10 @@ jobs:
           key: example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
       - run:
           name: Build release docker artifacts
-          command: |
-            mvn $MAVEN_CLI_OPTS docker:build -Prelease -U
+          command: mvn $MAVEN_CLI_OPTS docker:build -Prelease -U
       - run:
           name: Deploy release docker artifacts
-          command: |
-            mvn $MAVEN_CLI_OPTS docker:push -Prelease -U
+          command: mvn $MAVEN_CLI_OPTS docker:push -Prelease -U
 
   #########################
   # ARTIFACTS
@@ -80,8 +76,7 @@ jobs:
           key: example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
       - run:
           name: Deploy artifacts
-          command: |
-            mvn $MAVEN_CLI_OPTS deploy -DskipTests -U
+          command: mvn $MAVEN_CLI_OPTS deploy -DskipTests -U
 
 #########################
 # WORKFLOWS
