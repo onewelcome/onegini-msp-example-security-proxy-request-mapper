@@ -1,6 +1,9 @@
 version: 2
 
 jobs:
+  #########################
+  # BUILD
+  #########################
   build:
     working_directory: ~/repo
     docker:
@@ -79,3 +82,45 @@ jobs:
           name: Deploy artifacts
           command: |
             mvn $MAVEN_CLI_OPTS deploy -DskipTests -U
+
+#########################
+# WORKFLOWS
+#########################
+workflows:
+  version: 2
+  security-proxy-request-mapper-workflow:
+    jobs:
+      - build:
+          context: dev-context
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - deploy-docker-snapshot:
+          context: dev-context
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build
+      - deploy-docker-release:
+          context: dev-context
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build
+      - deploy-artifacts:
+          context: dev-context
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only:
+                - master
+          requires:
+            - build
