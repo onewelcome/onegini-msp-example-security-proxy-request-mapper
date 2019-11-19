@@ -40,7 +40,7 @@
 
 		<spring.boot.version>1.4.0.RELEASE</spring.boot.version>
 		<spring-boot-maven-plugin.version>1.4.0.RELEASE</spring-boot-maven-plugin.version>
-		<docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
+		<docker-maven-plugin.version>1.2.1</docker-maven-plugin.version>
 		<jackson-module-afterburner.version>2.7.1</jackson-module-afterburner.version>
 		<commons-lang3.version>3.4</commons-lang3.version>
 	</properties>
