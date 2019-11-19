@@ -8,9 +8,6 @@ jobs:
     working_directory: ~/repo
     docker:
       - image: circleci/openjdk:8-jdk
-        environment:
-          MAVEN_CLI_OPTS: --threads 1C --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true -s .circleci/mavenSettings.xml
-          MAVEN_OPTS: -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true
 
     steps:
       - checkout
@@ -26,6 +23,8 @@ jobs:
       - run:
           name: Build and run unit tests
           command: mvn $MAVEN_CLI_OPTS package
+      - store_artifacts:
+          path: target/
 
   #########################
   # DOCKERS
@@ -60,22 +59,6 @@ jobs:
           name: Deploy release docker artifacts
           command: mvn $MAVEN_CLI_OPTS docker:push -Prelease -U
 
-  #########################
-  # ARTIFACTS
-  #########################
-  deploy-artifacts:
-    docker:
-      - image: circleci/openjdk:8-jdk
-    working_directory: ~/repo
-    steps:
-      - attach_workspace:
-          at: ~/
-      - restore_cache:
-          key: example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
-      - run:
-          name: Deploy artifacts
-          command: mvn $MAVEN_CLI_OPTS deploy -DskipTests -U
-
 #########################
 # WORKFLOWS
 #########################
@@ -105,15 +88,5 @@ workflows:
               only: /.*/
             branches:
               ignore: /.*/
-          requires:
-            - build
-      - deploy-artifacts:
-          context: dev-context
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              only:
-                - master
           requires:
             - build
