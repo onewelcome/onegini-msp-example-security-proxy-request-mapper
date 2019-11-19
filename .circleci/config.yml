@@ -24,7 +24,7 @@ jobs:
           name: Build and run unit tests
           command: mvn $MAVEN_CLI_OPTS package
       - store_artifacts:
-          path: target/*.jar
+          path: target/app-boot.jar
 
   #########################
   # DOCKERS
