@@ -53,8 +53,6 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/
-      - restore_cache:
-          key: example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
       - run:
           name: Build release docker artifacts
           command: mvn $MAVEN_CLI_OPTS docker:build -Prelease -U
