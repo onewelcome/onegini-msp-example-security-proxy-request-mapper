@@ -1,4 +1,4 @@
-FROM release.onegini.com/library/openjdk8
+FROM release.onegini.com/library/openjdk8:1.8.0.232.b09
 MAINTAINER Onegini <info@onegini.com>
 
 # Add jar file
