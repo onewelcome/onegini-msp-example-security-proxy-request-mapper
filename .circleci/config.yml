@@ -29,9 +29,9 @@ jobs:
           path: target/app-boot.jar
       - persist_to_workspace:
 
-          root: ~/repo
+          root: ~/
           paths:
-            - target
+            - repo
 
   #########################
   # DOCKERS
@@ -42,9 +42,10 @@ jobs:
       - image: circleci/openjdk:8-jdk
 
     steps:
-      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - attach_workspace:
-          at: ~/repo
+          at: ~/
       - run:
           name: Build snapshot docker artifacts
           command: mvn $MAVEN_CLI_OPTS docker:build -Psnapshot -U
@@ -58,9 +59,10 @@ jobs:
       - image: circleci/openjdk:8-jdk
 
     steps:
-      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - attach_workspace:
-          at: ~/repo
+          at: ~/
       - run:
           name: Build release docker artifacts
           command: mvn $MAVEN_CLI_OPTS docker:build -Prelease -U
