@@ -28,7 +28,6 @@ jobs:
       - store_artifacts:
           path: target/app-boot.jar
       - persist_to_workspace:
-
           root: ~/
           paths:
             - repo
