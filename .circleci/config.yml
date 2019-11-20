@@ -21,7 +21,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.m2
-          key: example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
+          key: v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
       - run:
           name: Build and run unit tests
           command: mvn $MAVEN_CLI_OPTS package
