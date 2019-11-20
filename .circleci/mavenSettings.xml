@@ -1,0 +1,28 @@
+<settings>
+  <localRepository>/home/circleci/.m2/repository</localRepository>
+  <mirrors>
+    <mirror>
+      <id>Onegini Artifactory</id>
+      <name>libs-release</name>
+      <url>https://repo.onegini.com/artifactory/public</url>
+      <mirrorOf>*</mirrorOf>
+    </mirror>
+  </mirrors>
+  <servers>
+    <server>
+      <id>Onegini Artifactory</id>
+      <username>${ARTIFACTORY_USERNAME}</username>
+      <password>${ARTIFACTORY_PASSWORD}</password>
+    </server>
+    <server>
+      <id>release.onegini.com</id>
+      <username>${ARTIFACTORY_USERNAME}</username>
+      <password>${ARTIFACTORY_PASSWORD}</password>
+    </server>
+    <server>
+      <id>snapshot.onegini.com</id>
+      <username>${ARTIFACTORY_USERNAME}</username>
+      <password>${ARTIFACTORY_PASSWORD}</password>
+    </server>
+  </servers>
+</settings>

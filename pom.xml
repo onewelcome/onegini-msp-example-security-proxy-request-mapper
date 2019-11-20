@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2013-2016 Onegini b.v.
+  Copyright 2013-2019 Onegini b.v.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,103 +15,161 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.onegini.examples</groupId>
-	<artifactId>security-proxy-request-mapper</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+  <groupId>com.onegini.examples</groupId>
+  <artifactId>security-proxy-request-mapper</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
-	<name>example-security-proxy-request-mapper</name>
-	<description>Example Security Proxy Request Mapper</description>
+  <name>example-security-proxy-request-mapper</name>
+  <description>Example Security Proxy Request Mapper</description>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.1.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+  <parent>
+    <groupId>com.onegini</groupId>
+    <artifactId>og-parent</artifactId>
+    <version>25</version>
+    <relativePath/>
+  </parent>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
+  <properties>
+    <java.version>1.8</java.version>
 
-		<spring.boot.version>1.4.0.RELEASE</spring.boot.version>
-		<spring-boot-maven-plugin.version>1.4.0.RELEASE</spring-boot-maven-plugin.version>
-		<docker-maven-plugin.version>0.4.11</docker-maven-plugin.version>
-		<jackson-module-afterburner.version>2.7.1</jackson-module-afterburner.version>
-		<commons-lang3.version>3.4</commons-lang3.version>
-	</properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-undertow</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-afterburner</artifactId>
-			<version>${jackson-module-afterburner.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${commons-lang3.version}</version>
-		</dependency>
-	</dependencies>
+    <docker.groupName>onegini</docker.groupName>
+    <docker.imageName>example-security-proxy-request-mapper</docker.imageName>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<finalName>security-proxy-request-mapper</finalName>
-					<classifier>boot</classifier>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>${docker-maven-plugin.version}</version>
-				<configuration>
-					<imageName>example-security-proxy-request-mapper:snapshot</imageName>
-					<baseImage>java:8u92-jre-alpine</baseImage>
-					<entryPoint>["java", "-jar", "/opt/onegini/security-proxy-request-mapper-boot.jar"]</entryPoint>
-					<resources>
-						<resource>
-							<targetPath>/opt/onegini</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>security-proxy-request-mapper-boot.jar</include>
-						</resource>
-					</resources>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <spring-boot.version>1.5.22.RELEASE</spring-boot.version>
+    <spring-boot-starter-undertow.version>2.2.1.RELEASE</spring-boot-starter-undertow.version>
+    <jackson.version>2.10.0</jackson.version>
+    <jackson-module-afterburner.version>2.7.1</jackson-module-afterburner.version>
+    <commons-lang3.version>3.4</commons-lang3.version>
+  </properties>
 
+  <repositories>
+    <repository>
+      <id>Onegini Artifactory</id>
+      <name>Onegini Artifactory-releases</name>
+      <url>https://repo.onegini.com/artifactory/public</url>
+    </repository>
+  </repositories>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Onegini Artifactory</id>
+      <name>Onegini Artifactory-releases</name>
+      <url>https://repo.onegini.com/artifactory/public</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <distributionManagement>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>Onegini Artifactory</id>
+      <name>Release repo</name>
+      <url>https://repo.onegini.com/artifactory/libs-release-local</url>
+      <layout>default</layout>
+    </repository>
+    <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>Onegini Artifactory</id>
+      <name>Snapshot repo</name>
+      <url>https://repo.onegini.com/artifactory/libs-snapshot-local</url>
+      <layout>default</layout>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+      <version>${spring-boot.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-undertow</artifactId>
+      <version>${spring-boot-starter-undertow.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <version>${spring-boot.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-afterburner</artifactId>
+      <version>${jackson-module-afterburner.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>app</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot.version}</version>
+        <configuration>
+          <classifier>boot</classifier>
+          <mainClass>com.onegini.examples.ExampleRequestMapperApplication</mainClass>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <configuration>
+          <images>
+            <image>
+              <name>${project.name}</name>
+              <build>
+                <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
+                <assembly>
+                  <inline>
+                    <files>
+                      <file>
+                        <outputDirectory>/opt/onegini</outputDirectory>
+                        <source>${project.basedir}/target/app-boot.jar</source>
+                        <destName>app.jar</destName>
+                      </file>
+                    </files>
+                  </inline>
+                </assembly>
+              </build>
+            </image>
+          </images>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

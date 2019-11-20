@@ -1,0 +1,96 @@
+version: 2
+
+jobs:
+  #########################
+  # BUILD
+  #########################
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
+            - v1-example-security-proxy-request-mapper-
+      - run:
+          name: Collect and save dependencies
+          command: mvn $MAVEN_CLI_OPTS dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
+      - run:
+          name: Build and run unit tests
+          command: mvn $MAVEN_CLI_OPTS package
+      - store_artifacts:
+          path: target/app-boot.jar
+
+  #########################
+  # DOCKERS
+  #########################
+  deploy-docker-snapshot:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys:
+            - v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
+            - v1-example-security-proxy-request-mapper-
+      - run:
+          name: Build snapshot docker artifacts
+          command: mvn $MAVEN_CLI_OPTS docker:build -Psnapshot -U
+      - run:
+          name: Deploy snapshot docker artifacts
+          command: mvn $MAVEN_CLI_OPTS docker:push -Psnapshot -U
+
+  deploy-docker-release:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Build release docker artifacts
+          command: mvn $MAVEN_CLI_OPTS docker:build -Prelease -U
+      - run:
+          name: Deploy release docker artifacts
+          command: mvn $MAVEN_CLI_OPTS docker:push -Prelease -U
+
+#########################
+# WORKFLOWS
+#########################
+workflows:
+  version: 2
+  security-proxy-request-mapper-workflow:
+    jobs:
+      - build:
+          context: dev-context
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              only: /.*/
+      - deploy-docker-snapshot:
+          context: dev-context
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build
+      - deploy-docker-release:
+          context: dev-context
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
+          requires:
+            - build
