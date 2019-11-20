@@ -159,7 +159,7 @@
                     <files>
                       <file>
                         <outputDirectory>/opt/onegini</outputDirectory>
-                        <source>${project.basedir}/target/${project.artifactId}-${project.version}-boot.jar</source>
+                        <source>${project.basedir}/target/app-boot.jar</source>
                         <destName>app.jar</destName>
                       </file>
                     </files>
