@@ -12,7 +12,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key:
+          keys:
             - v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
             - v1-example-security-proxy-request-mapper-
       - run:
@@ -39,7 +39,7 @@ jobs:
       - attach_workspace:
           at: ~/
       - restore_cache:
-          key:
+          keys:
             - v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
             - v1-example-security-proxy-request-mapper-
       - run:
