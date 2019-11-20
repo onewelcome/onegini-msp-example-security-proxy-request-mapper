@@ -1,8 +1,7 @@
 version: 2.1
 
 orbs:
-#  maven: circleci/maven@0.0.11
-  maven: circleci/maven@1.0.0
+  maven: circleci/maven@0.0.11
 
 jobs:
   #########################
@@ -22,7 +21,7 @@ jobs:
 #          command: mvn $MAVEN_CLI_OPTS dependency:go-offline
       - maven/test:
           settings_file: .circleci/mavenSettings.xml
-          command: dependency:go-offline
+#          command: dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
@@ -32,7 +31,7 @@ jobs:
 #          command: mvn $MAVEN_CLI_OPTS package
       - maven/test:
           settings_file: .circleci/mavenSettings.xml
-          command: package
+#          command: package
       - store_artifacts:
           path: target/app-boot.jar
 
