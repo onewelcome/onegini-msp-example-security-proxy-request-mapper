@@ -27,6 +27,11 @@ jobs:
           command: mvn $MAVEN_CLI_OPTS package
       - store_artifacts:
           path: target/app-boot.jar
+      - persist_to_workspace:
+
+          root: ~/repo
+          paths:
+            - target
 
   #########################
   # DOCKERS
@@ -37,6 +42,7 @@ jobs:
       - image: circleci/openjdk:8-jdk
 
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo
       - run:
@@ -52,6 +58,7 @@ jobs:
       - image: circleci/openjdk:8-jdk
 
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo
       - run:
