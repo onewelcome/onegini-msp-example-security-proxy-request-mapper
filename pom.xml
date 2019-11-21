@@ -29,7 +29,7 @@
   <parent>
     <groupId>com.onegini</groupId>
     <artifactId>og-parent</artifactId>
-    <version>25</version>
+    <version>26</version>
     <relativePath/>
   </parent>
 
