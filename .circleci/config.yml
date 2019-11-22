@@ -29,10 +29,14 @@ jobs:
       - run:
           name: Collect and save dependencies
           command: mvn $MAVEN_CLI_OPTS dependency:go-offline
+      - save_cache: *save_m2_cache
       - run:
           name: Build and run unit tests
           command: mvn $MAVEN_CLI_OPTS package
-      - save_cache: *save_m2_cache
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
 
   deploy-docker-snapshot:
     executor: maven-builder
@@ -48,10 +52,6 @@ jobs:
       - run:
           name: Deploy snapshot docker artifacts
           command: mvn $MAVEN_CLI_OPTS docker:push -Psnapshot -U
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - repo
 
   deploy-docker-release:
     executor: maven-builder
