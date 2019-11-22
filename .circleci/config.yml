@@ -6,11 +6,9 @@ restore_cache: &restore_m2_cache
     - v1-example-security-proxy-request-mapper-
 
 save_cache: &save_m2_cache
-  - save_cache:
       key: v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
       paths:
         - ~/.m2
-
 
 executors:
   maven-builder:
