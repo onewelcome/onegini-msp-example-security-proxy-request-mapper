@@ -48,6 +48,10 @@ jobs:
       - run:
           name: Deploy snapshot docker artifacts
           command: mvn $MAVEN_CLI_OPTS docker:push -Psnapshot -U
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
 
   deploy-docker-release:
     executor: maven-builder
