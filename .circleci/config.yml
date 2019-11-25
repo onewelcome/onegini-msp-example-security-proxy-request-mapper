@@ -1,14 +1,14 @@
 version: 2.1
 
-restore_cache: &restore_m2_cache
+restore_cache: &restore_maven_cache
   keys:
-    - v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
-    - v1-example-security-proxy-request-mapper-
+    - v1-maven-{{ checksum "pom.xml" }}
+    - v1-maven-
 
-save_cache: &save_m2_cache
-      key: v1-example-security-proxy-request-mapper-{{ checksum "pom.xml" }}
-      paths:
-        - ~/.m2
+save_cache: &save_maven_cache
+  key: v1-maven-{{ checksum "pom.xml" }}
+  paths:
+    - ~/.m2
 
 executors:
   maven-builder:
@@ -25,14 +25,18 @@ jobs:
     executor: maven-builder
     steps:
       - checkout
-      - restore_cache: *restore_m2_cache
+      - restore_cache: *restore_maven_cache
       - run:
           name: Collect and save dependencies
           command: mvn $MAVEN_CLI_OPTS dependency:go-offline
+      - save_cache: *save_maven_cache
       - run:
           name: Build and run unit tests
           command: mvn $MAVEN_CLI_OPTS package
-      - save_cache: *save_m2_cache
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
 
   deploy-docker-snapshot:
     executor: maven-builder
@@ -41,7 +45,7 @@ jobs:
           docker_layer_caching: true
       - attach_workspace:
           at: ~/
-      - restore_cache: *restore_m2_cache
+      - restore_cache: *restore_maven_cache
       - run:
           name: Build snapshot docker artifacts
           command: mvn $MAVEN_CLI_OPTS docker:build -Psnapshot -U
@@ -56,7 +60,7 @@ jobs:
           docker_layer_caching: true
       - attach_workspace:
           at: ~/
-      - restore_cache: *restore_m2_cache
+      - restore_cache: *restore_maven_cache
       - run:
           name: Build release docker artifacts
           command: mvn $MAVEN_CLI_OPTS docker:build -Prelease -U
@@ -70,11 +74,7 @@ workflows:
     jobs:
       - build:
           context: dev-context
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              only: /.*/
+
       - deploy-docker-snapshot:
           context: dev-context
           filters:
@@ -83,6 +83,7 @@ workflows:
                 - master
           requires:
             - build
+
       - deploy-docker-release:
           context: dev-context
           filters:
