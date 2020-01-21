@@ -74,6 +74,9 @@ workflows:
     jobs:
       - build:
           context: dev-context
+          filters:
+            tags:
+              only: /.*/
 
       - deploy-docker-snapshot:
           context: dev-context
