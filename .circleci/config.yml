@@ -81,9 +81,9 @@ workflows:
       - deploy-docker-snapshot:
           context: dev-context
           filters:
-            branches:
-              only:
-                - master
+#            branches:
+#              only:
+#                - master
           requires:
             - build
 

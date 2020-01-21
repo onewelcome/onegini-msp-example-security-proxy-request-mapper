@@ -168,4 +168,59 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>release</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <registry>release.onegini.com</registry>
+              <removeAll>true</removeAll>
+              <autoPull>always</autoPull>
+              <images>
+                <image>
+                  <name>release.onegini.com/${docker.groupName}/${docker.imageName}:${project.version}</name>
+                  <build>
+                    <tags>
+                      <tag>latest</tag>
+                    </tags>
+                  </build>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>snapshot</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.fabric8</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <configuration>
+              <registry>snapshot.onegini.com</registry>
+              <removeAll>true</removeAll>
+              <autoPull>always</autoPull>
+              <images>
+                <image>
+                  <name>snapshot.onegini.com/${docker.groupName}/${docker.imageName}:${project.version}</name>
+                  <build>
+                    <tags>
+                      <tag>${docker.snapshotTag}</tag>
+                    </tags>
+                  </build>
+                </image>
+              </images>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
