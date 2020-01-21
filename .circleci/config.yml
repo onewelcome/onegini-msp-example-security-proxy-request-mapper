@@ -80,7 +80,7 @@ workflows:
 
       - deploy-docker-snapshot:
           context: dev-context
-          filters:
+#          filters:
 #            branches:
 #              only:
 #                - master
