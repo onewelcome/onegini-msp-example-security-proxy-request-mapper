@@ -41,7 +41,7 @@
     <commons-lang3.version>3.9</commons-lang3.version>
     <jackson.version>2.10.2</jackson.version>
     <jackson-module-afterburner.version>2.10.2</jackson-module-afterburner.version>
-    <spring-boot.version>2.2.4.RELEASE</spring-boot.version>
+    <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
   </properties>
 
   <repositories>
