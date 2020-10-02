@@ -1,10 +1,7 @@
-FROM release.onegini.com/library/openjdk8:1.8.0.232.b09
-MAINTAINER Onegini <info@onegini.com>
+FROM docker.io/library/openjdk:11.0.8-jre-slim
 
 # Add jar file
-ADD maven /
+ADD --chown=1621 maven /
 
-# Miscellaneous commands
-RUN chown -R onegini:onegini /opt
-USER onegini
-CMD /usr/bin/java -Dfile.encoding=UTF-8 -jar /opt/onegini/app.jar
+USER 1621
+CMD java -Dfile.encoding=UTF-8 -jar /opt/onegini/app.jar
