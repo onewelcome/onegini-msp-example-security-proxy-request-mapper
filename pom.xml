@@ -21,6 +21,8 @@
   <groupId>com.onegini.examples</groupId>
   <artifactId>security-proxy-request-mapper</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
   <packaging>jar</packaging>
 
   <name>example-security-proxy-request-mapper</name>
@@ -82,42 +84,58 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
       <version>${spring-boot.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-undertow</artifactId>
       <version>${spring-boot.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <version>${spring-boot.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
       <version>${jackson.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${jackson.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>${jackson.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-afterburner</artifactId>
       <version>${jackson-module-afterburner.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang3.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
     </dependency>
   </dependencies>
 
@@ -128,6 +146,8 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring-boot.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
         <configuration>
           <classifier>boot</classifier>
           <mainClass>com.onegini.examples.ExampleRequestMapperApplication</mainClass>
@@ -144,6 +164,8 @@
         <groupId>io.fabric8</groupId>
         <artifactId>docker-maven-plugin</artifactId>
         <version>${docker-maven-plugin.version}</version>
+
+  <url>https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper</url>
         <configuration>
           <images>
             <image>
