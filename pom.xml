@@ -39,7 +39,7 @@
     <docker-maven-plugin.version>0.36.0</docker-maven-plugin.version>
 
     <commons-lang3.version>3.12.0</commons-lang3.version>
-    <jackson.version>2.12.3</jackson.version>
+    <jackson.version>2.13.2.2</jackson.version>
     <jackson-module-afterburner.version>2.12.3</jackson-module-afterburner.version>
     <spring-boot.version>2.5.0</spring-boot.version>
   </properties>
