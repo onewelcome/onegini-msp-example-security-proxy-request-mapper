@@ -1,98 +1,53 @@
 version: 2.1
 
-restore_cache: &restore_maven_cache
-  keys:
-    - v1-maven-{{ checksum "pom.xml" }}
-    - v1-maven-
+orbs:
+  onegini-build: onegini/onegini-build@3
 
-save_cache: &save_maven_cache
-  key: v1-maven-{{ checksum "pom.xml" }}
-  paths:
-    - ~/.m2
+.dev-context-and-executor: &dev-context-and-executor
+  context: dev-context
+  executor:
+    name: onegini-build/maven-builder
+    tag: "11.0"
 
-executors:
-  maven-builder:
-    docker:
-      - image: circleci/openjdk:11-jdk-stretch
-        environment:
-          MAVEN_OPTS: " -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true -Xms256M -Xmx512M -Xss2M -XX:MaxMetaspaceSize=512M"
-          MAVEN_CLI_OPTS: " -s .circleci/mavenSettings.xml --threads 1C --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
-          JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-    working_directory: ~/repo
+.component-type-application: &component-type-application
+  component_type: application
 
-jobs:
-  build:
-    executor: maven-builder
-    steps:
-      - checkout
-      - restore_cache: *restore_maven_cache
-      - run:
-          name: Collect and save dependencies
-          command: mvn $MAVEN_CLI_OPTS dependency:go-offline
-      - save_cache: *save_maven_cache
-      - run:
-          name: Build and run unit tests
-          command: mvn $MAVEN_CLI_OPTS package
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - repo
+.require-build: &require-build
+  requires:
+    - build
 
-  deploy-docker-snapshot:
-    executor: maven-builder
-    steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - attach_workspace:
-          at: ~/
-      - restore_cache: *restore_maven_cache
-      - run:
-          name: Build snapshot docker artifacts
-          command: mvn $MAVEN_CLI_OPTS docker:build -Psnapshot -U
-      - run:
-          name: Deploy snapshot docker artifacts
-          command: mvn $MAVEN_CLI_OPTS docker:push -Psnapshot -U
-
-  deploy-docker-release:
-    executor: maven-builder
-    steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - attach_workspace:
-          at: ~/
-      - restore_cache: *restore_maven_cache
-      - run:
-          name: Build release docker artifacts
-          command: mvn $MAVEN_CLI_OPTS docker:build -Prelease -U
-      - run:
-          name: Deploy release docker artifacts
-          command: mvn $MAVEN_CLI_OPTS docker:push -Prelease -U
+.filter-tags-only: &filter-tags-only
+  filters:
+    tags:
+      only: /.*/
+    branches:
+      ignore: /.*/
 
 workflows:
   version: 2
-  security-proxy-request-mapper-workflow:
+  build-workflow:
     jobs:
-      - build:
-          context: dev-context
-          filters:
-            tags:
-              only: /.*/
+      - onegini-build/build-install:
+          name: build
+          <<: *dev-context-and-executor
+          <<: *component-type-application
 
-      - deploy-docker-snapshot:
-          context: dev-context
-          filters:
-            branches:
-              only:
-                - master
-          requires:
-            - build
+      - onegini-build/maven:
+          name: docker-snapshot
+          <<: *dev-context-and-executor
+          <<: *component-type-application
+          <<: *require-build
+          goal: pl.project13.maven:git-commit-id-plugin:revision jib:build
+          profiles: jib
 
-      - deploy-docker-release:
+      - onegini-build/docker-release-promote:
+          name: docker-release
+          <<: *dev-context-and-executor
+          <<: *filter-tags-only
+
+      - onegini-build/notify-released:
+          name: norify-released
           context: dev-context
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore: /.*/
+          <<: *filter-tags-only
           requires:
-            - build
+            - docker-release
