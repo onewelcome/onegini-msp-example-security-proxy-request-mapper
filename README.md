@@ -46,6 +46,7 @@ or (via Docker)
 ```http
 POST /map-request HTTP/1.1
 Host: localhost:5540
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 Content-Type: application/json
  
 {
