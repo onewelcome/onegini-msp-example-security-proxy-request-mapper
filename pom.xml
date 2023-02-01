@@ -20,13 +20,14 @@
 
   <groupId>com.onegini.examples</groupId>
   <artifactId>security-proxy-request-mapper</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>jar</packaging>
 
   <name>example-security-proxy-request-mapper</name>
   <description>Example Security Proxy Request Mapper</description>
 
   <properties>
+    <revision>DEV-SNAPSHOT</revision>
     <maven.compiler.release>11</maven.compiler.release>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,7 +36,7 @@
     <docker.groupName>onegini</docker.groupName>
     <docker.imageName>example-security-proxy-request-mapper</docker.imageName>
 
-    <spring-boot.version>2.7.6</spring-boot.version>
+    <spring-boot.version>2.7.8</spring-boot.version>
   </properties>
 
   <repositories>
@@ -137,6 +138,28 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>3.1.0</version>
+          <executions>
+            <execution>
+              <id>enforce-no-snapshots</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireReleaseDeps>
+                    <onlyWhenRelease>true</onlyWhenRelease>
+                  </requireReleaseDeps>
+                </rules>
+                <fail>true</fail>
+              </configuration>
+            </execution>
+          </executions>
+
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.10.1</version>
         </plugin>
@@ -146,9 +169,14 @@
           <version>${spring-boot.version}</version>
         </plugin>
         <plugin>
-          <groupId>io.fabric8</groupId>
-          <artifactId>docker-maven-plugin</artifactId>
-          <version>0.36.0</version>
+          <groupId>pl.project13.maven</groupId>
+          <artifactId>git-commit-id-plugin</artifactId>
+          <version>4.9.10</version>
+        </plugin>
+        <plugin>
+          <groupId>com.google.cloud.tools</groupId>
+          <artifactId>jib-maven-plugin</artifactId>
+          <version>3.3.1</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -169,82 +197,42 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>io.fabric8</groupId>
-        <artifactId>docker-maven-plugin</artifactId>
-        <configuration>
-          <images>
-            <image>
-              <name>${project.name}</name>
-              <build>
-                <dockerFileDir>${project.basedir}/src/main/docker</dockerFileDir>
-                <assembly>
-                  <inline>
-                    <files>
-                      <file>
-                        <outputDirectory>/opt/onegini</outputDirectory>
-                        <source>${project.basedir}/target/app-boot.jar</source>
-                        <destName>app.jar</destName>
-                      </file>
-                    </files>
-                  </inline>
-                </assembly>
-              </build>
-            </image>
-          </images>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
   <profiles>
     <profile>
-      <id>release</id>
+      <id>jib</id>
       <build>
         <plugins>
           <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
+            <groupId>pl.project13.maven</groupId>
+            <artifactId>git-commit-id-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>get-the-git-infos</id>
+                <goals>
+                  <goal>revision</goal>
+                </goals>
+                <phase>initialize</phase>
+              </execution>
+            </executions>
             <configuration>
-              <registry>release.onegini.com</registry>
-              <removeAll>true</removeAll>
-              <autoPull>always</autoPull>
-              <images>
-                <image>
-                  <name>release.onegini.com/${docker.groupName}/${docker.imageName}:${project.version}</name>
-                  <build>
-                    <tags>
-                      <tag>latest</tag>
-                    </tags>
-                  </build>
-                </image>
-              </images>
+              <generateGitPropertiesFile>false</generateGitPropertiesFile>
+              <includeOnlyProperties>
+                <includeOnlyProperty>^git.commit.id.describe$</includeOnlyProperty>
+              </includeOnlyProperties>
+              <commitIdGenerationMode>full</commitIdGenerationMode>
             </configuration>
           </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>snapshot</id>
-      <build>
-        <plugins>
           <plugin>
-            <groupId>io.fabric8</groupId>
-            <artifactId>docker-maven-plugin</artifactId>
+            <groupId>com.google.cloud.tools</groupId>
+            <artifactId>jib-maven-plugin</artifactId>
             <configuration>
-              <registry>snapshot.onegini.com</registry>
-              <removeAll>true</removeAll>
-              <autoPull>always</autoPull>
-              <images>
-                <image>
-                  <name>snapshot.onegini.com/${docker.groupName}/${docker.imageName}:${project.version}</name>
-                  <build>
-                    <tags>
-                      <tag>${docker.snapshotTag}</tag>
-                    </tags>
-                  </build>
-                </image>
-              </images>
+              <to>
+                <image>snapshot.onegini.com/${docker.groupName}/${docker.imageName}</image>
+                <tags>${project.version},${git.commit.id.describe}</tags>
+              </to>
             </configuration>
           </plugin>
         </plugins>

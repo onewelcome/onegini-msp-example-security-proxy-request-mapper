@@ -25,7 +25,7 @@ In the Example Request Mapper project the following main frameworks are used:
 
 ## Build the application with docker
 
-`mvn docker:build`
+` mvn pl.project13.maven:git-commit-id-plugin:revision jib:build -Pjib`
 
 ## Run the application
 
@@ -46,6 +46,7 @@ or (via Docker)
 ```http
 POST /map-request HTTP/1.1
 Host: localhost:5540
+Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 Content-Type: application/json
  
 {
@@ -81,3 +82,13 @@ Content-Type: application/json;charset=UTF-8
   }
 }
 ```
+
+## Release
+
+To create a release:
+
+1. Go to [Create release](https://github.com/onewelcome/onegini-msp-example-security-proxy-request-mapper/releases/new) page
+2. Create git tag with version name
+3. Generate release notes with `Auto-generate release notes`
+4. Verify if release notes are correct
+5. If it is valid then press `Publish release`

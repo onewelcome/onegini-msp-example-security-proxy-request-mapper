@@ -39,11 +39,6 @@ public class RequestMapperConfiguration {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RequestMapperConfiguration.class);
 
-  @Autowired
-  private HttpHandler httpHandler;
-  @Autowired
-  private UndertowProperties undertowProperties;
-
   @Bean
   public RequestMapperHttpHandler requestMapperHttpHandler(final ObjectMapper objectMapper) {
     return new RequestMapperHttpHandler(objectMapper);
@@ -67,7 +62,8 @@ public class RequestMapperConfiguration {
   }
 
   @Bean
-  public Undertow undertow(final BasicAuthIdentityManager basicAuthIdentityManager) {
+  public Undertow undertow(final BasicAuthIdentityManager basicAuthIdentityManager, final HttpHandler httpHandler,
+                           final UndertowProperties undertowProperties) {
     final Undertow undertow = Undertow.builder()
         .addHttpListener(undertowProperties.getPort(), undertowProperties.getHost())
         .setHandler(addSecurity(httpHandler, basicAuthIdentityManager))
