@@ -7,12 +7,12 @@ registries:
     password: "${{secrets.MAVEN_REPOSITORY_REPO_ONEGINI_COM_ARTIFACTORY_PUBLIC_PASSWORD}}"
   docker-registry-release-onegini-com-443:
     type: docker-registry
-    url: https://release.onegini.com:443
+    url: https://release.onewelcome.com:443
     username: dependabot
     password: "${{secrets.DOCKER_REGISTRY_RELEASE_ONEGINI_COM_443_PASSWORD}}"
   docker-registry-release-onegini-com:
     type: docker-registry
-    url: https://release.onegini.com
+    url: https://release.onewelcome.com
     username: dependabot
     password: "${{secrets.DOCKER_REGISTRY_RELEASE_ONEGINI_COM_PASSWORD}}"
 
