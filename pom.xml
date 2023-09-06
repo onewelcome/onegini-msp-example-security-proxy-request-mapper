@@ -230,7 +230,7 @@
             <artifactId>jib-maven-plugin</artifactId>
             <configuration>
               <to>
-                <image>snapshot.onegini.com/${docker.groupName}/${docker.imageName}</image>
+                <image>snapshot.onewelcome.com/${docker.groupName}/${docker.imageName}</image>
                 <tags>${project.version},${git.commit.id.describe}</tags>
               </to>
             </configuration>
