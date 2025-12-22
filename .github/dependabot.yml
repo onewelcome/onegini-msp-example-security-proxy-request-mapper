@@ -1,20 +1,10 @@
 version: 2
 registries:
-  maven-repository-repo-onegini-com-artifactory-public:
+  maven-repository-onewelcome-artifactory:
     type: maven-repository
-    url: https://repo.onegini.com/artifactory/public
-    username: dependabot
-    password: "${{secrets.MAVEN_REPOSITORY_REPO_ONEGINI_COM_ARTIFACTORY_PUBLIC_PASSWORD}}"
-  docker-registry-release-onegini-com-443:
-    type: docker-registry
-    url: https://release.onewelcome.com:443
-    username: dependabot
-    password: "${{secrets.DOCKER_REGISTRY_RELEASE_ONEGINI_COM_443_PASSWORD}}"
-  docker-registry-release-onegini-com:
-    type: docker-registry
-    url: https://release.onewelcome.com
-    username: dependabot
-    password: "${{secrets.DOCKER_REGISTRY_RELEASE_ONEGINI_COM_PASSWORD}}"
+    url: https://europe-maven.pkg.dev/cpl-iam-p-oip-01/virtual-maven-public
+    username: _json_key_base64
+    password: "${{secrets.GAR_DEPENDABOT_SA}}"
 
 updates:
 - package-ecosystem: maven
@@ -24,7 +14,7 @@ updates:
     time: "04:00"
   open-pull-requests-limit: 10
   registries:
-  - maven-repository-repo-onegini-com-artifactory-public
+  - maven-repository-onewelcome-artifactory
 - package-ecosystem: docker
   directory: "/src/main/docker/Dockerfile"
   schedule:
@@ -32,5 +22,5 @@ updates:
     time: "04:00"
   open-pull-requests-limit: 10
   registries:
-  - docker-registry-release-onegini-com-443
-  - docker-registry-release-onegini-com
+  - docker-registry-release-onewelcome-com-443
+  - docker-registry-release-onewelcome-com
